@@ -25,7 +25,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Ambient Background Effect from existing file */
+        /* Ambient Background Effect from language-ai_workshop_FINAL.html */
         body::before {
             content: ""; position: fixed; inset: -40%;
             background: conic-gradient(from 0deg, #0b1a2a, #0f3c5a, #0b1a2a, #0e2a42, #0b1a2a);
@@ -65,7 +65,11 @@
         }
         .reveal p.subtitle { 
             font-size: 1.4em; opacity: 0.7; font-weight: 300; 
-            letter-spacing: 0.02em; 
+            letter-spacing: 0.02em; margin-bottom: 0.2em;
+        }
+        .reveal p.presenter {
+            font-size: 1.1em; opacity: 0.5; font-weight: 400;
+            letter-spacing: 0.05em; margin-top: 1.5em;
         }
 
         /* Title Slide specific layout */
@@ -92,6 +96,7 @@
                 <div class="title-content">
                     <h1>Current AI trends:<br/>Language and Agentic AI</h1>
                     <p class="subtitle">A Workshop for Shanti Bhavan</p>
+                    <p class="presenter">delivered by Sri Govindarajan</p>
                 </div>
             </section>
         </div>
@@ -110,7 +115,7 @@
             display: 'flex'
         });
 
-        // Full Screen Button Logic (Strictly preserved from your file)
+        // Full Screen Button Logic
         (function() {
             const btn = document.getElementById('fullscreenBtn');
             function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement); }
@@ -129,7 +134,7 @@
             update();
         })();
 
-        // Slide Counter Logic (Strictly preserved)
+        // Slide Counter Logic
         Reveal.on('slidechanged', event => {
             const current = event.indexh + 1;
             const total = Reveal.getTotalSlides();
