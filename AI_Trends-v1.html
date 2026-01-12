@@ -56,54 +56,30 @@
             font-family: monospace; font-size: 0.8rem; opacity: 0.4; letter-spacing: 0.1em;
         }
 
-        /* Reveal.js Overrides */
+        /* Reveal.js Overrides & Shared Layouts */
         .reveal { color: var(--ink); }
-        .reveal h1 { 
-            font-size: 3.2em; line-height: 1.1; margin: 0 0 0.3em 0; 
-            font-weight: 800; letter-spacing: -0.04em; color: var(--focus);
-            text-wrap: balance;
-        }
-        .reveal h2.title-h2 { 
-            font-size: 2.10rem; font-weight: 600; line-height: 1.25; 
-            color: var(--ink-warm); text-transform: none; margin-bottom: 1rem;
-        }
-        .reveal p.subtitle { 
-            font-size: 1.4em; opacity: 0.7; font-weight: 300; 
-            letter-spacing: 0.02em; 
-        }
-        .reveal p.presenter {
-            font-size: 1.1em; opacity: 0.5; font-weight: 400;
-            letter-spacing: 0.05em; margin-top: 1.5em;
-        }
-
-        /* Agenda Table Styles (Borrowed from Slide 15) */
         .content-shift { width: 100%; max-width: 1000px; margin: 0 auto; text-align: left; }
-        .pe-table-wrap { margin-top: 0.6rem; background: rgba(255,255,255,0.02); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
-        .pe-table { width: 100%; border-collapse: collapse; border-spacing: 0; }
-        .pe-table th, .pe-table td {
-            border-bottom: 1px solid rgba(255,255,255,.12);
-            padding: .75rem 1.2rem;
-            vertical-align: middle;
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-        .pe-table th {
-            text-align: left; font-weight: 700; color: var(--focus);
-            background: rgba(255,255,255,.04); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em;
-        }
-        .pe-table td { color: #dbe7f1; }
-        .pe-table tr:last-child td { border-bottom: none; }
+        
+        /* Typography */
+        .reveal h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.04em; color: var(--focus); text-wrap: balance; margin-bottom: 0.3em; }
+        .hero-title { font-size: 3.6rem; font-weight: 800; color: var(--focus); margin: 0; letter-spacing: -0.04em; line-height: 1.1; }
+        .hero-subtitle { font-size: 1.65rem; margin-top: 0.2rem; font-weight: 300; opacity: 0.8; }
+        .reveal h2.title-h2 { font-size: 2.10rem; font-weight: 600; color: var(--ink-warm); margin-bottom: 1rem; text-transform: none; }
+        
+        /* Pill System from Source Slide 1 */
+        .pillline { display: flex; align-items: center; gap: 0.8rem; margin-top: 1rem; }
+        .pill { background: var(--pill-bg); border: 1px solid var(--pill-brd); padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; color: var(--focus); }
+        .pill-sep { opacity: 0.3; font-weight: 300; }
+
+        /* Agenda Table Styles */
+        .pe-table-wrap { margin-top: 0.6rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+        .pe-table { width: 100%; border-collapse: collapse; }
+        .pe-table td { border-bottom: 1px solid rgba(255,255,255,.12); padding: .75rem 1.2rem; color: #dbe7f1; font-size: 1rem; }
+        .pe-table th { text-align: left; font-weight: 700; color: var(--focus); background: rgba(255,255,255,.04); text-transform: uppercase; font-size: 0.8rem; padding: .75rem 1.2rem; letter-spacing: 0.1em; }
         .pe-col-el { width: 25%; font-weight: 700; color: var(--ink); }
 
-        /* Centering Wrapper for Slide 1 */
-        .centered-slide {
-            display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 100%;
-        }
+        /* Centering for Title Slide */
+        .title-slide-container { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center !important; width: 100%; }
     </style>
 </head>
 <body>
@@ -113,17 +89,17 @@
     </div>
 
     <div class="bottom-bar">
-        <div class="slide-number" id="customSlideNumber">1/2</div>
+        <div class="slide-number" id="customSlideNumber">1/3</div>
     </div>
 
     <div class="reveal">
         <div class="slides">
             
             <section data-background-color="transparent">
-                <div class="centered-slide">
+                <div class="title-slide-container">
                     <h1>Current AI trends:<br/>Language and Agentic AI</h1>
-                    <p class="subtitle">A Workshop for Shanti Bhavan</p>
-                    <p class="presenter">delivered by Sri Govindarajan</p>
+                    <p style="font-size: 1.4em; opacity: 0.7; font-weight: 300;">A Workshop for Shanti Bhavan</p>
+                    <p style="font-size: 1.1em; opacity: 0.5; margin-top: 1.5em;">delivered by Sri Govindarajan</p>
                 </div>
             </section>
 
@@ -139,32 +115,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="pe-col-el">01. History</td>
-                                    <td>Evolution of language understanding in computers</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-col-el">02. Architecture</td>
-                                    <td>Under the hood of ChatGPT & what makes Generative models special</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-col-el">03. Interaction</td>
-                                    <td>How to talk to Language models — Prompt engineering</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-col-el">04. Capabilities</td>
-                                    <td>Limitations, challenges, and Agentic AI (the future of automation)</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-col-el">05. Impact</td>
-                                    <td>The disruption of Language and Agentic AI on professional life</td>
-                                </tr>
-                                <tr>
-                                    <td class="pe-col-el">06. Preparation</td>
-                                    <td>How to prepare yourself for the AI disrupted world</td>
-                                </tr>
+                                <tr><td class="pe-col-el">01. History</td><td>Evolution of language understanding in computers</td></tr>
+                                <tr><td class="pe-col-el">02. Architecture</td><td>Under the hood of ChatGPT & what makes Generative models special</td></tr>
+                                <tr><td class="pe-col-el">03. Interaction</td><td>How to talk to Language models — Prompt engineering</td></tr>
+                                <tr><td class="pe-col-el">04. Capabilities</td><td>Limitations, challenges, and Agentic AI (the future of automation)</td></tr>
+                                <tr><td class="pe-col-el">05. Impact</td><td>The disruption of Language and Agentic AI on professional life</td></tr>
+                                <tr><td class="pe-col-el">06. Preparation</td><td>How to prepare yourself for the AI disrupted world</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+
+            <section data-background-color="transparent">
+                <div class="content-shift">
+                    <h1 class="hero-title" style="margin-bottom: 0.1em;">History of Language AI</h1>
+                    <p class="hero-subtitle" style="margin-bottom: 1.5em;">Evolution of language understanding in computers</p>
+                    
+                    <div class="pillline">
+                        <span class="pill">Rule-Based</span>
+                        <span class="pill-sep">→</span>
+                        <span class="pill">Statistical</span>
+                        <span class="pill-sep">→</span>
+                        <span class="pill">Neural</span>
+                        <span class="pill-sep">→</span>
+                        <span class="pill">Generative</span>
                     </div>
                 </div>
             </section>
