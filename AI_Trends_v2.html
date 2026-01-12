@@ -5,7 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
     <title>Language AI Workshop</title>
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css" id="theme">
     
     <style>
         :root {
@@ -14,179 +15,152 @@
             --pill-bg: rgba(255,255,255,.06); --pill-brd: rgba(255,255,255,.10);
         }
 
-        html, body { height: 100%; overflow: hidden; }
+        html, body { height: 100%; }
         
         body {
             margin: 0;
             background:
                 radial-gradient(1200px 800px at 12% 12%, var(--bg1), var(--bg2) 60%),
                 linear-gradient(120deg, var(--bg2) 0%, var(--bg3) 50%, var(--bg2) 100%);
-            color: var(--ink);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Ambient Background Effect */
+        /* Ambient Background Effect from source */
         body::before {
             content: ""; position: fixed; inset: -40%;
             background: conic-gradient(from 0deg, #0b1a2a, #0f3c5a, #0b1a2a, #0e2a42, #0b1a2a);
-            opacity: 0.4; filter: blur(100px); z-index: -1;
-            animation: rotateBg 60s linear infinite;
+            filter: blur(160px) opacity(.10);
+            animation: swirl 28s linear infinite;
+            z-index: -1;
         }
-        @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes swirl { to { transform: rotate(360deg); } }
 
         /* Custom UI Elements */
-        .top-bar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            padding: 1.2rem 2rem; display: flex; justify-content: flex-end;
-            pointer-events: none;
+        .fs-btn { 
+            position: fixed; top: 14px; right: 14px; z-index: 9999; display: inline-flex;
+            align-items: center; gap: .5rem; padding: .55rem .8rem; border-radius: 999px; 
+            border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.35);
+            color: #f5f5f7; font: 600 14px system-ui, -apple-system, sans-serif; cursor: pointer;
+            backdrop-filter: blur(6px); 
         }
-        #fullscreenBtn {
-            pointer-events: auto; background: var(--pill-bg); border: 1px solid var(--pill-brd);
-            color: var(--ink); padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer;
-            font-size: 0.85rem; backdrop-filter: blur(10px); transition: all 0.2s;
-        }
-        #fullscreenBtn:hover { background: rgba(255,255,255,0.12); border-color: var(--focus); color: var(--focus); }
-
-        .bottom-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-            padding: 1.5rem 2rem; display: flex; justify-content: space-between;
-            align-items: center; pointer-events: none;
-        }
-        .slide-number {
-            font-family: monospace; font-size: 0.8rem; opacity: 0.4; letter-spacing: 0.1em;
+        .custom-slide-number {
+            position: fixed; right: 12px; bottom: 12px; z-index: 30;
+            background: rgba(2,6,23,.45); color: #e6edf3; border-radius: 6px;
+            padding: .30rem .50rem; font: 600 14px system-ui, -apple-system, sans-serif;
         }
 
-        /* Reveal.js Overrides */
-        .reveal { color: var(--ink); }
-        .content-shift { width: 100%; max-width: 1080px; margin: 0 auto; text-align: left; }
+        /* Reveal.js Overrides from source */
+        .reveal { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
+        .content-shift { margin-left: 3.5ch; }
         
-        /* Typography */
-        .reveal h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.04em; color: var(--focus); text-wrap: balance; margin-bottom: 0.3em; }
-        .hero-title { font-size: 3.6rem; font-weight: 800; color: var(--focus); margin: 0; letter-spacing: -0.04em; line-height: 1.1; }
-        .hero-subtitle { font-size: 1.65rem; margin-top: 0.2rem; font-weight: 300; opacity: 0.8; }
-        .reveal h2.title-h2 { font-size: 2.10rem; font-weight: 600; color: var(--ink-warm); margin-bottom: 1rem; text-transform: none; }
+        .title-h1 { font-weight: 600; font-size: 2.8rem !important; line-height: 1.1; letter-spacing: 0.025em; color: var(--ink-warm); margin: 0 0 1rem 0; text-transform: none !important; }
+        .title-h2 { font-weight: 600; font-size: 1.7rem; line-height: 1.2; letter-spacing: .02em; color:#e8ebee; margin:0 0 .8rem 0; text-transform: none !important; }
+        .lead { font-size: 1.15rem; line-height: 1.5; }
+        
+        /* EXACT PILL STYLE FROM SOURCE */
+        .pillline { display:inline-block; padding:.55rem .85rem; border-radius:999px; background: var(--pill-bg); border:1px solid var(--pill-brd); margin: 0.35rem 0; }
+        .pillline strong { color: #fff; font-weight: 600; }
+
+        .fragment.emerge { transition: transform .5s, opacity .5s; transform: translateY(10px); }
+        .fragment.emerge.visible { transform:none; }
+        .svgwrap { display:flex; justify-content:center; margin-top: 1.5rem; }
+
+        /* Agenda Table Styles (approved in last turn) */
+        .pe-table-wrap { margin-top:.6rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); overflow: hidden; }
+        .pe-table { width:100%; border-collapse: collapse; }
+        .pe-table th, .pe-table td { border-bottom: 1px solid rgba(255,255,255,.12); padding: .75rem 1.2rem; vertical-align: top; font-size: 0.95rem; line-height: 1.4; }
+        .pe-table th { text-align: left; font-weight: 700; color: #e6edf3; background: rgba(255,255,255,.04); }
+        .pe-col-el { width: 16ch; font-weight: 700; color: var(--ink); }
 
         /* Centering for Title Slide */
-        .title-slide-container { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center !important; width: 100%; }
-
-        /* --- STYLES FOR SLIDE 3 (From Original Source) --- */
-        .timeline-wrap {
-            margin: 3rem auto 2.5rem auto;
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-        .timeline-wrap img { width: 100%; display: block; }
-        
-        .pillline { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin-top: 1rem; }
-        .pill { background: var(--pill-bg); border: 1px solid var(--pill-brd); padding: 0.4rem 1.1rem; border-radius: 100px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; color: var(--focus); }
-        .pill-sep { opacity: 0.3; font-weight: 300; }
-
-        /* Agenda Table Styles */
-        .pe-table-wrap { margin-top: 0.6rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
-        .pe-table { width: 100%; border-collapse: collapse; }
-        .pe-table td { border-bottom: 1px solid rgba(255,255,255,.12); padding: .75rem 1.2rem; color: #dbe7f1; font-size: 1rem; }
-        .pe-table th { text-align: left; font-weight: 700; color: var(--focus); background: rgba(255,255,255,.04); text-transform: uppercase; font-size: 0.8rem; padding: .75rem 1.2rem; letter-spacing: 0.1em; }
-        .pe-col-el { width: 25%; font-weight: 700; color: var(--ink); }
+        .title-slide-container { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center !important; width: 100%; height: 100%; }
     </style>
 </head>
 <body>
-
-    <div class="top-bar">
-        <button id="fullscreenBtn" title="Enter full screen">📺 Full Screen</button>
-    </div>
-
-    <div class="bottom-bar">
-        <div class="slide-number" id="customSlideNumber">1/3</div>
-    </div>
+    <div class="custom-slide-number" id="customSlideNumber">1/3</div>
+    <button class="fs-btn" id="fsToggle">📺 Full Screen</button>
 
     <div class="reveal">
         <div class="slides">
             
             <section data-background-color="transparent">
                 <div class="title-slide-container">
-                    <h1>Current AI trends:<br/>Language and Agentic AI</h1>
+                    <h1 style="font-size: 3.2rem; font-weight: 800; color: var(--focus); margin-bottom: 0.5rem;">Current AI trends:<br/>Language and Agentic AI</h1>
                     <p style="font-size: 1.4em; opacity: 0.7; font-weight: 300;">A Workshop for Shanti Bhavan</p>
                     <p style="font-size: 1.1em; opacity: 0.5; margin-top: 1.5em;">delivered by Sri Govindarajan</p>
                 </div>
             </section>
 
-            <section data-background-color="transparent" data-transition="fade">
+            <section data-background-color="transparent">
                 <div class="content-shift">
                     <h2 class="title-h2">Workshop Agenda</h2>
                     <div class="pe-table-wrap">
                         <table class="pe-table">
                             <thead>
-                                <tr>
-                                    <th class="pe-col-el">Module</th>
-                                    <th>Key Topics & Discussion</th>
-                                </tr>
+                                <tr><th class="pe-col-el">Module</th><th>Key Topics & Discussion</th></tr>
                             </thead>
                             <tbody>
                                 <tr><td class="pe-col-el">01. History</td><td>Evolution of language understanding in computers</td></tr>
                                 <tr><td class="pe-col-el">02. Architecture</td><td>Under the hood of ChatGPT & what makes Generative models special</td></tr>
                                 <tr><td class="pe-col-el">03. Interaction</td><td>How to talk to Language models — Prompt engineering</td></tr>
-                                <tr><td class="pe-col-el">04. Capabilities</td><td>Limitations, challenges, and Agentic AI (the future of automation)</td></tr>
-                                <tr><td class="pe-col-el">05. Impact</td><td>The disruption of Language and Agentic AI on professional life</td></tr>
-                                <tr><td class="pe-col-el">06. Preparation</td><td>How to prepare yourself for the AI disrupted world</td></tr>
+                                <tr><td class="pe-col-el">04. Capabilities</td><td>Limitations, challenges, and Agentic AI</td></tr>
+                                <tr><td class="pe-col-el">05. Impact</td><td>Disruption on professional life</td></tr>
+                                <tr><td class="pe-col-el">06. Preparation</td><td>How to prepare for the AI disrupted world</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <section data-background-color="transparent">
-                <div class="content-shift" style="text-align: center;">
-                  <h1 class="hero-title" style="margin-bottom: 0.1em;">History of Language AI</h1>
-                  <p class="hero-subtitle" style="margin-bottom: 1.5em;">Evolution of language understanding in computers</p>
-                  
-                  <div class="timeline-wrap">
-                    <img src="image_0.png" alt="AI Timeline">
-                  </div>
-                  
-                  <div class="pillline">
-                    <span class="pill">Rule-Based</span>
-                    <span class="pill-sep">→</span>
-                    <span class="pill">Statistical</span>
-                    <span class="pill-sep">→</span>
-                    <span class="pill">Neural</span>
-                    <span class="pill-sep">→</span>
-                    <span class="pill">Generative</span>
-                  </div>
+            <section aria-label="History of Language AI" data-transition="fade">
+                <div class="content-shift">
+                    <h1 class="title-h1">History of Language AI</h1>
+                    <div class="lead">
+                        <p class="fragment emerge pillline"><strong>AI</strong>: the science and engineering of making intelligent machines—especially computer programs.</p>
+                        <p class="fragment emerge pillline"><strong>Language AI</strong>: a branch of AI that can understand, process, and generate human language.</p>
+                        <p class="fragment emerge" style="margin-top:1rem;"><em>Language AI pre-dates ChatGPT — here’s a timeline:</em></p>
+                    </div>
+                    <div aria-label="Timeline" class="fragment emerge svgwrap">
+                        <svg height="621" viewbox="0 0 1380 621" width="1380" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;border-radius:16px;">
+                            <defs>
+                                <lineargradient id="panelGrad" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#1b2a40"></stop><stop offset="100%" stop-color="#152538"></stop></lineargradient>
+                                <filter id="softglow"><fegaussianblur stddeviation="1.8"></fegaussianblur><femerge><femergenode></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+                                <style>
+                                    .axis { stroke: #8a97a5; stroke-width: 2.8; } .tick { stroke: #7a8794; stroke-width: 1.4; }
+                                    .label-dark { font: 600 18px sans-serif; fill: #0f1a2b; } .small { font: 700 14px sans-serif; fill: #eaf2f8; }
+                                    .legend { font: 700 14px sans-serif; fill: #ffffff; } .bubble { filter: url(#softglow); }
+                                </style>
+                            </defs>
+                            <rect fill="url(#panelGrad)" height="495" rx="16" width="1310" x="58" y="81"></rect>
+                            <line class="axis" x1="104" x2="1322" y1="460" y2="460"></line>
+                            <text class="small" text-anchor="middle" x="104" y="492">2000</text>
+                            <text class="small" text-anchor="middle" x="1322" y="492">2023</text>
+                            <g transform="translate(36,290)"><rect class="bubble" fill="#D9D9DE" height="44" rx="12" width="136"></rect><text class="label-dark" x="68" y="28" text-anchor="middle">Bag-of-words</text></g>
+                            <g transform="translate(1267,313)"><rect class="bubble" fill="#EBA3A3" height="44" rx="12" width="110"></rect><text class="label-dark" x="55" y="28" text-anchor="middle">ChatGPT</text></g>
+                        </svg>
+                    </div>
                 </div>
             </section>
 
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
     <script>
         Reveal.initialize({
-            hash: true, margin: 0.1, center: true, controls: false, 
-            progress: false, transition: 'fade', display: 'flex'
+            hash: true, margin: 0.1, center: false, controls: false, 
+            progress: true, transition: 'fade', display: 'block'
         });
 
-        // Full Screen Button Logic
-        (function() {
-            const btn = document.getElementById('fullscreenBtn');
-            function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement); }
-            function enterFS() { 
-                const el = document.documentElement;
-                (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el); 
-            }
-            function exitFS() { (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document); }
-            function update() { btn.textContent = isFS() ? '⤢ Exit Full Screen' : '📺 Full Screen'; }
-            btn.addEventListener('click', (e) => { e.preventDefault(); isFS() ? exitFS() : enterFS(); });
-            document.addEventListener('fullscreenchange', update);
-            update();
-        })();
+        // Fullscreen Logic
+        const fsBtn = document.getElementById('fsToggle');
+        fsBtn.onclick = () => {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        };
 
-        // Slide Counter Logic
-        Reveal.on('slidechanged', event => {
-            document.getElementById('customSlideNumber').textContent = (event.indexh + 1) + '/' + Reveal.getTotalSlides();
+        // Slide Counter
+        Reveal.on('slidechanged', e => {
+            document.getElementById('customSlideNumber').textContent = (e.indexh + 1) + '/' + Reveal.getTotalSlides();
         });
     </script>
 </body>
