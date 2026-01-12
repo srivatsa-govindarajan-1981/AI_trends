@@ -95,20 +95,14 @@
         .pe-table tr:last-child td { border-bottom: none; }
         .pe-col-el { width: 25%; font-weight: 700; color: var(--ink); }
 
-        /* Robust Centering for Title Slide */
-        .title-slide-container {
+        /* Centering Wrapper for Slide 1 */
+        .centered-slide {
             display: flex !important;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center !important;
-            width: 100%;
-        }
-        .title-slide-container h1, 
-        .title-slide-container p {
-            text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+            text-align: center;
+            height: 100%;
         }
     </style>
 </head>
@@ -126,7 +120,7 @@
         <div class="slides">
             
             <section data-background-color="transparent">
-                <div class="title-slide-container">
+                <div class="centered-slide">
                     <h1>Current AI trends:<br/>Language and Agentic AI</h1>
                     <p class="subtitle">A Workshop for Shanti Bhavan</p>
                     <p class="presenter">delivered by Sri Govindarajan</p>
