@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+    <title>Language AI Workshop — Title Slide</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    
+    <style>
+        :root {
+            --bg1: #0e1a2b; --bg2: #0b1726; --bg3: #0a1522;
+            --ink: #e6edf3; --ink-warm: #f5f5f7; --focus: #ffd080;
+            --pill-bg: rgba(255,255,255,.06); --pill-brd: rgba(255,255,255,.10);
+        }
+
+        html, body { height: 100%; overflow: hidden; }
+        
+        body {
+            margin: 0;
+            background:
+                radial-gradient(1200px 800px at 12% 12%, var(--bg1), var(--bg2) 60%),
+                linear-gradient(120deg, var(--bg2) 0%, var(--bg3) 50%, var(--bg2) 100%);
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Ambient Background Effect from existing file */
+        body::before {
+            content: ""; position: fixed; inset: -40%;
+            background: conic-gradient(from 0deg, #0b1a2a, #0f3c5a, #0b1a2a, #0e2a42, #0b1a2a);
+            opacity: 0.4; filter: blur(100px); z-index: -1;
+            animation: rotateBg 60s linear infinite;
+        }
+        @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Custom UI Elements */
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 1.2rem 2rem; display: flex; justify-content: flex-end;
+            pointer-events: none;
+        }
+        #fullscreenBtn {
+            pointer-events: auto; background: var(--pill-bg); border: 1px solid var(--pill-brd);
+            color: var(--ink); padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer;
+            font-size: 0.85rem; backdrop-filter: blur(10px); transition: all 0.2s;
+        }
+        #fullscreenBtn:hover { background: rgba(255,255,255,0.12); border-color: var(--focus); color: var(--focus); }
+
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+            padding: 1.5rem 2rem; display: flex; justify-content: space-between;
+            align-items: center; pointer-events: none;
+        }
+        .slide-number {
+            font-family: monospace; font-size: 0.8rem; opacity: 0.4; letter-spacing: 0.1em;
+        }
+
+        /* Reveal.js Overrides to match your branding */
+        .reveal { color: var(--ink); }
+        .reveal h1 { 
+            font-size: 3.2em; line-height: 1.1; margin: 0 0 0.3em 0; 
+            font-weight: 800; letter-spacing: -0.04em; color: var(--focus);
+            text-wrap: balance;
+        }
+        .reveal p.subtitle { 
+            font-size: 1.4em; opacity: 0.7; font-weight: 300; 
+            letter-spacing: 0.02em; 
+        }
+
+        /* Title Slide specific layout */
+        .title-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <button id="fullscreenBtn" title="Enter full screen">📺 Full Screen</button>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="slide-number" id="customSlideNumber">1/1</div>
+    </div>
+
+    <div class="reveal">
+        <div class="slides">
+            <section data-background-color="transparent" data-transition="fade-in fade-out">
+                <div class="title-content">
+                    <h1>Current AI trends:<br/>Language and Agentic AI</h1>
+                    <p class="subtitle">A Workshop for Shanti Bhavan</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            margin: 0.1,
+            center: true,
+            controls: false,
+            progress: false,
+            transition: 'fade',
+            backgroundTransition: 'fade',
+            display: 'flex'
+        });
+
+        // Full Screen Button Logic (Strictly preserved from your file)
+        (function() {
+            const btn = document.getElementById('fullscreenBtn');
+            function isFS() { return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement); }
+            function enterFS() { 
+                const el = document.documentElement;
+                (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el); 
+            }
+            function exitFS() { (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen).call(document); }
+            function update() {
+                btn.textContent = isFS() ? '⤢ Exit Full Screen' : '📺 Full Screen';
+            }
+            btn.addEventListener('click', (e) => { e.preventDefault(); isFS() ? exitFS() : enterFS(); });
+            document.addEventListener('fullscreenchange', update);
+            document.addEventListener('webkitfullscreenchange', update);
+            document.addEventListener('msfullscreenchange', update);
+            update();
+        })();
+
+        // Slide Counter Logic (Strictly preserved)
+        Reveal.on('slidechanged', event => {
+            const current = event.indexh + 1;
+            const total = Reveal.getTotalSlides();
+            document.getElementById('customSlideNumber').textContent = current + '/' + total;
+        });
+    </script>
+</body>
+</html>
