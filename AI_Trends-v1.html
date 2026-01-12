@@ -56,20 +56,28 @@
             font-family: monospace; font-size: 0.8rem; opacity: 0.4; letter-spacing: 0.1em;
         }
 
-        /* Reveal.js Overrides & Shared Layouts */
+        /* Reveal.js Overrides */
         .reveal { color: var(--ink); }
-        .content-shift { width: 100%; max-width: 1000px; margin: 0 auto; text-align: left; }
+        .content-shift { width: 100%; max-width: 1080px; margin: 0 auto; text-align: left; }
         
         /* Typography */
         .reveal h1 { font-size: 3.2em; font-weight: 800; letter-spacing: -0.04em; color: var(--focus); text-wrap: balance; margin-bottom: 0.3em; }
         .hero-title { font-size: 3.6rem; font-weight: 800; color: var(--focus); margin: 0; letter-spacing: -0.04em; line-height: 1.1; }
         .hero-subtitle { font-size: 1.65rem; margin-top: 0.2rem; font-weight: 300; opacity: 0.8; }
         .reveal h2.title-h2 { font-size: 2.10rem; font-weight: 600; color: var(--ink-warm); margin-bottom: 1rem; text-transform: none; }
-        
-        /* Pill System from Source Slide 1 */
-        .pillline { display: flex; align-items: center; gap: 0.8rem; margin-top: 1rem; }
-        .pill { background: var(--pill-bg); border: 1px solid var(--pill-brd); padding: 0.4rem 1rem; border-radius: 100px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; color: var(--focus); }
+
+        /* Robust Centering for Title Slide */
+        .title-slide-container { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center !important; width: 100%; }
+
+        /* Exact Layout Classes from Source (Slide 1/3) */
+        .split-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; align-items: center; }
+        .pillline { display: flex; align-items: center; gap: 0.8rem; margin-top: 2.2rem; }
+        .pill { background: var(--pill-bg); border: 1px solid var(--pill-brd); padding: 0.4rem 1.1rem; border-radius: 100px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; color: var(--focus); }
         .pill-sep { opacity: 0.3; font-weight: 300; }
+        
+        /* Timeline Image Wrap */
+        .timeline-wrap { position: relative; border-radius: 16px; overflow: hidden; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .timeline-wrap img { width: 100%; display: block; filter: saturate(1.1) brightness(1.1); }
 
         /* Agenda Table Styles */
         .pe-table-wrap { margin-top: 0.6rem; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
@@ -77,9 +85,6 @@
         .pe-table td { border-bottom: 1px solid rgba(255,255,255,.12); padding: .75rem 1.2rem; color: #dbe7f1; font-size: 1rem; }
         .pe-table th { text-align: left; font-weight: 700; color: var(--focus); background: rgba(255,255,255,.04); text-transform: uppercase; font-size: 0.8rem; padding: .75rem 1.2rem; letter-spacing: 0.1em; }
         .pe-col-el { width: 25%; font-weight: 700; color: var(--ink); }
-
-        /* Centering for Title Slide */
-        .title-slide-container { display: flex !important; flex-direction: column; align-items: center; justify-content: center; text-align: center !important; width: 100%; }
     </style>
 </head>
 <body>
@@ -129,10 +134,12 @@
 
             <section data-background-color="transparent">
                 <div class="content-shift">
-                    <h1 class="hero-title" style="margin-bottom: 0.1em;">History of Language AI</h1>
-                    <p class="hero-subtitle" style="margin-bottom: 1.5em;">Evolution of language understanding in computers</p>
-                    
-                    <div class="pillline">
+                  <div class="split-2">
+                    <div>
+                      <h1 class="hero-title" style="margin-bottom: 0.1em;">History of Language AI</h1>
+                      <p class="hero-subtitle" style="margin-bottom: 1.5em;">Evolution of language understanding in computers</p>
+                      
+                      <div class="pillline">
                         <span class="pill">Rule-Based</span>
                         <span class="pill-sep">→</span>
                         <span class="pill">Statistical</span>
@@ -140,7 +147,13 @@
                         <span class="pill">Neural</span>
                         <span class="pill-sep">→</span>
                         <span class="pill">Generative</span>
+                      </div>
                     </div>
+                    
+                    <div class="timeline-wrap">
+                      <img alt="Evolution Timeline" src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;q=80&amp;w=800"/>
+                    </div>
+                  </div>
                 </div>
             </section>
 
