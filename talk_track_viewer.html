@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Talk Track Viewer</title>
+  <style>
+    :root {
+      --bg: #07090d;
+      --panel: rgba(255,255,255,0.04);
+      --panel2: rgba(255,255,255,0.06);
+      --text: #eef2f7;
+      --muted: rgba(238,242,247,0.75);
+      --accent: #ffd080;
+      --accent2: rgba(255,208,128,0.28);
+      --border: rgba(255,255,255,0.10);
+      --shadow: 0 18px 55px rgba(0,0,0,0.45);
+      --radius: 18px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 700px at 15% 10%, rgba(255,208,128,0.07), transparent 55%),
+                  radial-gradient(900px 600px at 85% 25%, rgba(120,170,255,0.06), transparent 60%),
+                  linear-gradient(120deg, #05070b 0%, var(--bg) 50%, #05070b 100%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      overflow: hidden;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(255,208,128,0.95), rgba(255,208,128,0.55));
+      box-shadow: 0 0 0 1px rgba(255,208,128,0.25) inset;
+      transition: width 220ms ease;
+    }
+
+    /* Layout */
+    .wrap {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      padding: 34px 22px 18px;
+      box-sizing: border-box;
+      gap: 14px;
+    }
+
+    .stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .card {
+      width: min(980px, 92vw);
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+      background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 30px;
+      box-sizing: border-box;
+    }
+
+    .kicker {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1;
+      margin-bottom: 14px;
+      user-select: none;
+    }
+
+    .title {
+      margin: 0 0 14px 0;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height: 1.15;
+    }
+
+    .meta {
+      margin: 0 0 18px 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .body {
+      font-size: 24px; /* minimum 24px as requested */
+      line-height: 1.55;
+    }
+
+    .body p { margin: 0 0 14px 0; }
+
+    .body ul {
+      margin: 10px 0 16px 1.25em;
+      padding: 0;
+    }
+    .body li { margin: 8px 0; }
+
+    .body .label {
+      display: inline-block;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .body .talktrack {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255,208,128,0.08);
+      border: 1px solid rgba(255,208,128,0.22);
+    }
+
+    .body .question {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(120,170,255,0.08);
+      border: 1px solid rgba(120,170,255,0.22);
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: min(980px, 92vw);
+      margin: 0 auto;
+      padding-bottom: 4px;
+      user-select: none;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(6px);
+    }
+    .btn:hover { background: rgba(255,255,255,0.08); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .counter {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 650;
+      text-align: center;
+      flex: 1;
+    }
+
+    .hint {
+      color: rgba(238,242,247,0.55);
+      font-size: 14px;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* Scrollbar subtle */
+    .card::-webkit-scrollbar { width: 10px; }
+    .card::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 999px; }
+    .card::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <div class="progress-wrap" aria-hidden="true"><div id="progress" class="progress"></div></div>
+
+  <div class="wrap">
+    <div class="stage">
+      <main class="card" id="card" role="region" aria-label="Talk track slide">
+        <!-- content injected -->
+      </main>
+    </div>
+
+    <div>
+      <div class="controls" role="navigation" aria-label="Slide navigation">
+        <button id="prevBtn" class="btn" type="button" aria-label="Back (Left Arrow)">← Back</button>
+        <div class="counter" id="counter">Slide 1 of 1</div>
+        <button id="nextBtn" class="btn" type="button" aria-label="Next (Right Arrow / Space)">Next →</button>
+      </div>
+      <div class="hint">Keyboard: ← Back • → / Space Next</div>
+    </div>
+  </div>
+
+  <script>
+    // TALK TRACK CONTENT (embedded)
+    const RAW = String.raw`Slide 1: Title Slide (2 Mins)
+• Concept: Framing AI as a leadership opportunity for Shanti Bhavan students.
+• Speaker Bullets:
+• Welcome the students. Emphasize that this is about "Agentic AI"—not just chatting with a bot.
+• Set the year: 2026. This is the current state of the art.
+• Talk Track: "Welcome. We aren't here to talk about a trend; we are here to talk about a shift in the 'physics' of work. You are the future architects of the Orchestration Era."
+Slide 2: Agenda (3 Mins)
+• Concept: The journey from LLM "brains" to Agentic "workers".
+• Speaker Bullets:
+• Walk through the 6 chapters: LLMs, Prompting, Agents, Patterns, Impact, and Personal Strategy.
+• Goal: Leave with a playbook you can apply today.
+• Talk Track: "We have a lot to cover. We start with how these models think, then how to control them, and finally, how you can use them to bootstrap your careers."
+Slide 3: History of Language AI (4 Mins)
+• Concept: Contextualizing current tech as a 20-year evolution.
+• Speaker Bullets:
+• Explain that Language AI existed long before ChatGPT.
+• Highlight 2017 (Attention) as the most important date on the timeline.
+• Talk Track: "It's easy to think this happened overnight. It didn't. It's 20 years of small math breakthroughs that finally exploded in 2022."
+Slide 4: How can a computer understand Human language? (5 Mins)
+• Concept: The bridge between human words and computer numbers.
+• Speaker Bullets:
+• Explain that computers don't see words; they see numerical values.
+• Transition from counting words to "mapping" their relationships.
+• Talk Track: "To a computer, the word 'Apple' is just a coordinate in a vast mathematical map. Let's see how that map started."
+Slide 5: Bag-of-words (4 Mins)
+• Concept: The first (and flawed) attempt to process language.
+• Speaker Bullets:
+• The computer simply counts word frequency.
+• The Flaw: It loses meaning. "Man bites dog" and "Dog bites man" look identical to this model.
+• Talk Track: "We used to just count words. It was like trying to understand a recipe by only knowing how many cups of flour it used, without knowing when to add the eggs."
+Slide 6: Word Embeddings (Vector Space) (5 Mins)
+• Concept: Turning meaning into 3D geography.
+• Speaker Bullets:
+• Words with similar meanings live near each other.
+• Mention "King - Man + Woman = Queen" as proof that math can represent meaning.
+• Talk Track: "This is where AI gets smart. It learned that words are defined by the 'company they keep'—if 'happy' and 'joyful' are used in the same context, they become mathematical neighbors."
+Slide 7: LLMs Basics (Tokenization & Transformers) (6 Mins)
+• Concept: The mechanics of "Next-Token Prediction".
+• Speaker Bullets:
+• Tokens: Models see fragments of words, not whole words.
+• Transformer: The "Attention" mechanism lets the model look at the entire sentence at once.
+• Talk Track: "An LLM is a world-class guesser. It predicts the next token based on everything it has seen before, using the Transformer to focus on the most important words in your request."
+
+Transition Question (Understanding Check): "If I ask an AI 'The capital of India is...', is it looking that fact up in a book, or is it calculating the most likely next word?"
+Slide 8: Prompt Engineering (5 Mins)
+• Concept: Precision instruction through structure.
+• Speaker Bullets:
+• The Template: Persona, Task, Context, Format, Audience, Tone, Data.
+• Why it works: Clear constraints guide the model to better results.
+• Talk Track: "Prompting is a new type of engineering. To get a professional result, you must give the model a job description, not just a question."
+Slide 9: Good and bad prompts (5 Mins)
+• Concept: Practical examples of specificity.
+• Speaker Bullets:
+• Contrast the generic "climate" prompt with the "Shanti Bhavan/India" prompt.
+• Highlight the use of local data (NITI Aayog/IMD) to ground the answer.
+• Talk Track: "A bad prompt is a lucky dip. A good prompt is a direct order. Notice how adding specific Indian data sources makes the AI actually useful for your community."
+Slide 10: Approach to using LLMs "Vibing" (Iteration) (5 Mins)
+• Concept: The human-in-the-loop conversation.
+• Speaker Bullets:
+• "Vibing" is the iterative loop: Prompt → Review → Feedback → Repeat.
+• Your role: You own the vision; the LLM provides the labor.
+• Talk Track: "Treat the LLM like an eager, bright intern. You must review every line it writes and give it specific feedback to make it better."
+Slide 11: LLMs - The Bad, and the Ugly (5 Mins)
+• Concept: Critical awareness of AI failures.
+• Speaker Bullets:
+• Hallucinations: Confident falsehoods.
+• Brittle Reasoning: It can sound smart but fail simple logic if reworded.
+• Security: Mention prompt injection and jailbreaks.
+• Talk Track: "AI is powerful but dangerous. It can lie to you with perfect grammar. Never delegate your critical thinking to a machine."
+Transition Question (Understanding Check): "If an AI gives you a perfect code snippet that solves your problem, should you ship it immediately? Why not?"
+Slide 12: Agentic AI (5 Mins)
+• Concept: Transitioning from "Chat" to "Goals".
+• Speaker Bullets:
+• Analogy: LLM = Calculator; Agent = Accountant.
+• Agents work toward a goal until the job is done.
+• Talk Track: "A chatbot answers you. An agent finishes the task for you. This is the difference between a tool and a worker."
+Slide 13: Three pillars of agency (5 Mins)
+• Concept: The three modular parts of an agent.
+• Speaker Bullets:
+• Planning: Breaking tasks into sub-goals.
+• Memory: Short-term (context) vs Long-term (RAG).
+• Tool Use: Calling APIs and apps.
+• Talk Track: "An agent needs three things to be useful: a plan, a memory, and hands (tools) to interact with the world."
+Slide 14: The agentic loop (4 Mins)
+• Concept: The cycle of self-reflection.
+• Speaker Bullets:
+• Goal → Plan → Act → Observe → Refine → Repeat.
+• Observe: The agent checks its own work and fixes mistakes.
+• Talk Track: "An agent doesn't just stop. It observes the result of its action, and if it's wrong, it reflects and tries again."
+Slide 15: How Agentic AI builds solutions (Multi-agent) (5 Mins)
+• Concept: Specialist agents collaborating.
+• Speaker Bullets:
+• Multi-agent patterns: One specialist drafts, one reviewer verifies.
+• Benefits: Higher accuracy and fewer hallucinations through cross-checking.
+• Talk Track: "Think of this as a team. You can have one agent who is a great coder and another who is a strict security auditor. Together, they build something better than a single model ever could."
+Slide 16: Impact of Generative AI (Software & Education) (5 Mins)
+• Concept: The shift in professional value.
+• Speaker Bullets:
+• AI is writing up to 30% of enterprise code now.
+• Risk: Entry-level roles are shrinking for those who only know syntax.
+• Talk Track: "The 'syntax expert' is being replaced. The market now rewards those who can architect systems using AI assistants."
+Slide 17: The Future of Tech Work (Orchestration Era) (5 Mins)
+• Concept: The 99% vs 1% framework.
+• Speaker Bullets:
+• 99% Automated: Execution, summarizing, and basic code.
+• 1% Human: Strategy, Judgment, and Problem Decomposition.
+• Talk Track: "If the AI does the 99% of 'doing' for free, the value of the 1%—the 'deciding'—explodes. You must own that 1%."
+Slide 18: The Orchestration Era (Where the Value Lives) (5 Mins)
+• Concept: The Forward-Deployed Engineer.
+• Speaker Bullets:
+• Don't sit in an "ivory tower." Sit inside the business process.
+• Build the "connective tissue" between messy data and AI.
+• Talk Track: "If the cost of 'doing' goes to zero, what is the value of 'deciding'? Your career is built on the judgment that AI can't replicate."
+Slide 19: Your 2026 Career Playbook (6 Mins)
+• Concept: Concrete steps for career bootstrapping.
+• Speaker Bullets:
+• Step 1: Strategic Decomposition.
+• Step 2: Domain Stacking (Finance/NGO Management).
+• Step 3: Operational Intelligence.
+• Step 4: Agentic Portfolio (document failures!).
+• Talk Track: "This is your map. Don't just show a perfect app. Show a portfolio that proves you know how to fix AI when it breaks."
+Slide 20: Thanks / Discussion (45 Mins)
+• Concept: Q&A and deep reflection.
+• Speaker Bullets:
+• Open for questions. Use the Appendix slides (21-23) to show real tools.
+• Talk Track: "We’ve seen the map. Now, tell me where you want to go. What are your questions?"`;
+
+    function escapeHtml(s) {
+      return s
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function parseSlides(raw) {
+      const re = /^Slide\s+(\d+)\s*:\s*(.+)$/gm;
+      const matches = [...raw.matchAll(re)];
+      const slides = [];
+      for (let i = 0; i < matches.length; i++) {
+        const start = matches[i].index;
+        const end = (i + 1 < matches.length) ? matches[i + 1].index : raw.length;
+        const headerLine = matches[i][0];
+        const slideNum = Number(matches[i][1]);
+        const slideTitle = matches[i][2].trim();
+        const body = raw.slice(start + headerLine.length, end).trim();
+        slides.push({ num: slideNum, title: slideTitle, body });
+      }
+      return slides;
+    }
+
+    function bodyToHtml(body) {
+      const lines = body.split(/\r?\n/);
+      const blocks = [];
+      let currentUl = null;
+
+      function flushUl() {
+        if (currentUl) {
+          blocks.push({ type: 'ul', items: currentUl });
+          currentUl = null;
+        }
+      }
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) {
+          flushUl();
+          continue;
+        }
+
+        // Bullet line (starts with •)
+        if (line.startsWith('•')) {
+          const item = line.replace(/^•\s*/, '');
+          currentUl = currentUl || [];
+          currentUl.push(item);
+          continue;
+        }
+
+        flushUl();
+        blocks.push({ type: 'p', text: line });
+      }
+      flushUl();
+
+      // Convert blocks into HTML with highlights
+      const out = [];
+      for (const b of blocks) {
+        if (b.type === 'ul') {
+          out.push('<ul>');
+          for (const it of b.items) {
+            // highlight leading label like "Concept:" or "Talk Track:" or "Transition Question ...:" if present
+            const m = it.match(/^([^:]{2,40}):\s*(.*)$/);
+            if (m) {
+              const label = escapeHtml(m[1]);
+              const rest = escapeHtml(m[2]);
+              if (label.toLowerCase().includes('talk track')) {
+                out.push(`<li><span class="label">${label}:</span> ${rest}</li>`);
+              } else {
+                out.push(`<li><span class="label">${label}:</span> ${rest}</li>`);
+              }
+            } else {
+              out.push(`<li>${escapeHtml(it)}</li>`);
+            }
+          }
+          out.push('</ul>');
+          continue;
+        }
+
+        // Paragraph; special handling for Transition Question lines
+        const pText = b.text;
+        const isTransitionQ = /^Transition Question\b/i.test(pText);
+        const esc = escapeHtml(pText);
+        if (isTransitionQ) {
+          out.push(`<div class="question"><p>${esc}</p></div>`);
+        } else {
+          out.push(`<p>${esc}</p>`);
+        }
+      }
+
+      // Wrap Talk Track quoted lines in a highlighted box if present in paragraphs
+      // (We already label inside bullets; this adds emphasis for any paragraph talk tracks.)
+      const html = out.join('\n')
+        .replace(/(<li><span class=\"label\">Talk Track<\/span>:[^<]*<\/li>)/gi, '$1');
+      return html;
+    }
+
+    const slides = parseSlides(RAW);
+
+    let idx = 0;
+
+    const card = document.getElementById('card');
+    const progress = document.getElementById('progress');
+    const counter = document.getElementById('counter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function render() {
+      const s = slides[idx];
+      const total = slides.length;
+      const pct = total > 1 ? (idx / (total - 1)) * 100 : 100;
+
+      progress.style.width = `${pct}%`;
+      counter.textContent = `Slide ${idx + 1} of ${total}`;
+
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === total - 1;
+
+      const minsMatch = s.title.match(/\(([^)]+)\)\s*$/);
+      const meta = minsMatch ? minsMatch[1] : '';
+
+      const cleanTitle = s.title.replace(/\s*\([^)]+\)\s*$/, '').trim();
+
+      card.innerHTML = `
+        <div class="kicker">🗣️ Talk Track Viewer <span style="opacity:.6">•</span> <span>Slide ${idx + 1}</span>${meta ? `<span style="opacity:.6">•</span><span>${meta}</span>` : ''}</div>
+        <h1 class="title">${escapeHtml(cleanTitle)}</h1>
+        ${meta ? `<p class="meta">Timing: <strong style="color: var(--text); font-weight: 800;">${escapeHtml(meta)}</strong></p>` : ''}
+        <div class="body">${bodyToHtml(s.body)}</div>
+      `;
+
+      // Scroll to top when changing slides
+      card.scrollTop = 0;
+    }
+
+    function next() {
+      if (idx < slides.length - 1) {
+        idx += 1;
+        render();
+      }
+    }
+
+    function prev() {
+      if (idx > 0) {
+        idx -= 1;
+        render();
+      }
+    }
+
+    nextBtn.addEventListener('click', next);
+    prevBtn.addEventListener('click', prev);
+
+    document.addEventListener('keydown', (e) => {
+      // Avoid interfering with browser shortcuts
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        next();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prev();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
